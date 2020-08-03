@@ -141,7 +141,10 @@ export default {
     CarAhead() {
       if (this.CarAheadState == true) {
         this.CarAheadmessage = "启动";
-        this.message.vehicleInfo[3] = this.message.vehicleInfo[3] + 0.001;
+        /* this.message.vehicleInfo[3] = this.message.vehicleInfo[3] + 0.001; */
+        setInterval(() => {
+          this.message.vehicleInfo[3] = this.message.vehicleInfo[3] + 0.001;
+        }, 1000);
       } else {
         this.CarAheadmessage = "停止";
       }
@@ -150,7 +153,10 @@ export default {
     Carback() {
       if (this.CarBackState == true) {
         this.CarBackmessage = "启动";
-        this.message.vehicleInfo[3] = this.message.vehicleInfo[3] - 0.001;
+        setInterval(() => {
+           this.message.vehicleInfo[3] = this.message.vehicleInfo[3] - 0.001;
+        }, 1000);
+       
       } else {
         this.CarBackmessage = "停止";
       }
@@ -159,7 +165,10 @@ export default {
     CarLeft() {
       if (this.CarLeftState == true) {
         this.CarLeftmessage = "启动";
-        this.message.vehicleInfo[4] = this.message.vehicleInfo[4] + 0.001;
+        setInterval(() => {
+           this.message.vehicleInfo[4] = this.message.vehicleInfo[4] + 0.001;
+        }, 1000);
+        
       } else {
         this.CarLeftmessage = "停止";
       }
@@ -168,7 +177,10 @@ export default {
     CarRight() {
       if (this.CarRightState == true) {
         this.CarRightmessage = "启动";
-        this.message.vehicleInfo[4] = this.message.vehicleInfo[4] - 0.001;
+         setInterval(() => {
+          this.message.vehicleInfo[4] = this.message.vehicleInfo[4] - 0.001;
+        }, 1000);
+        
       } else {
         this.CarRightmessage = "停止";
       }
