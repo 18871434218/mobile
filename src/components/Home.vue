@@ -89,11 +89,13 @@ export default {
 
       cnt: 0,
 
-      message:{
+     /*  message:{
         "baseState":[1.000000,40.800000,0.4],
         "vehicleInfo":[0.000000,"002",0.000000,120.199000,30.281000,40.000000,20.000000,0.500000],
         "errorInfo":[1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000]
-      },
+      }, */
+
+      message: {"baseState":[1.000000,40.800000,0.4],"vehicleInfo":[1.000000,"002",0.000000,120.199000,30.281000,40.000000,20.000000,0.500000],"errorInfo":[1.000000,0.000000,1.000000,0.000000,0.000000,0.000000,0.000000,2.000000]}
     };
   },
 
@@ -103,7 +105,7 @@ export default {
       var qtt = JSON.stringify(this.message);
 
     /* var qtt = this.message; */
-      this.client.publish(topic, qtt, {qos: 1}, function(err) {
+      this.client.publish(topic, qtt, { qos: 0, retain: false }, function(err) {
         if (err == undefined) {
           console.log("Publish finished");
           console.log("qttdata", qtt);
@@ -141,7 +143,6 @@ export default {
     CarAhead() {
       if (this.CarAheadState == true) {
         this.CarAheadmessage = "启动";
-        /* this.message.vehicleInfo[3] = this.message.vehicleInfo[3] + 0.001; */
         setInterval(() => {
           this.message.vehicleInfo[3] = this.message.vehicleInfo[3] + 0.001;
         }, 1000);
@@ -263,7 +264,11 @@ export default {
             this.Send();
         }, 5000);     
     });
- 
+   
+    this.client.on("reconnect", error => {
+        console.log("正在重连：", error);
+      });
+
     this.client.on("error", error => {
       console.log("连接失败", error);
     });
