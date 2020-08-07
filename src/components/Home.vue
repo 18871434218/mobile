@@ -8,10 +8,6 @@
     </div>
 
     <div style="margin-top:30px">
-     <!--  <mt-cell title="开关状态" v-show="false">
-        <mt-switch v-model="CarState" @change="changeCarStatus">{{Carmessage}}</mt-switch>
-      </mt-cell> -->
-
       <mt-cell title="前进">
         <mt-switch v-model="CarAheadState" @change="CarAhead">{{CarAheadmessage}}</mt-switch>
       </mt-cell>
@@ -27,7 +23,7 @@
       <mt-cell title="右移">
         <mt-switch v-model="CarRightState" @change="CarRight">{{CarRightmessage}}</mt-switch>
       </mt-cell>
-
+ 
       <mt-cell title="操作速度">
         <mt-button type="primary" size="small" @click="addCarSpeed">+</mt-button>
         <span style="width:40px">{{ Carspeed }}</span>
@@ -56,9 +52,10 @@ export default {
   data() {
     return {
       userName: "",
-
       /* CarState: false, //设置车状态
       Carmessage: "停止", */
+      templelongitude: 0,     //临时经度
+      templelatitude: 0,      //临时纬度
 
       CarAheadState: false,   //车前进
       CarAheadmessage: "停止",
@@ -72,7 +69,7 @@ export default {
       CarRightState: false,
       CarRightmessage: "停止", //车右移
 
-      Carspeed: 40, //速度
+      Carspeed: 0, //速度
 
       Controller: false,  //控制器
       Controllermessage: "关闭",
@@ -88,14 +85,10 @@ export default {
       flag: false,
 
       cnt: 0,
-
-     /*  message:{
-        "baseState":[1.000000,40.800000,0.4],
-        "vehicleInfo":[0.000000,"002",0.000000,120.199000,30.281000,40.000000,20.000000,0.500000],
-        "errorInfo":[1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000,1.000000]
-      }, */
-
-      message: {"baseState":[1.000000,40.800000,0.4],"vehicleInfo":[1.000000,"002",0.000000,120.199000,30.281000,40.000000,20.000000,0.500000],"errorInfo":[1.000000,0.000000,1.000000,0.000000,0.000000,0.000000,0.000000,2.000000]}
+      
+      message: {"baseState":[1.000000,40.800000,0.4],
+      "vehicleInfo":[1.000000,"002",0.000000,120.199000,30.281000,40.000000,20.000000,0.500000],
+      "errorInfo":[1.000000,0.000000,1.000000,2.000000,0.000000,0.000000,0.000000,1.000000]}
     };
   },
 
@@ -143,66 +136,74 @@ export default {
     CarAhead() {
       if (this.CarAheadState == true) {
         this.CarAheadmessage = "启动";
-        setInterval(() => {
-          this.message.vehicleInfo[3] = this.message.vehicleInfo[3] + 0.001;
+        var ahead1 = setInterval(() => {
+          this.message.vehicleInfo[4] = this.message.vehicleInfo[4] + 0.001;
+          if(this.CarAheadState == false){
+            this.CarAheadmessage = "停止";
+            clearInterval(ahead1);
+          }
         }, 1000);
-      } else {
-        this.CarAheadmessage = "停止";
-      }
+      } 
     },
 
     Carback() {
       if (this.CarBackState == true) {
         this.CarBackmessage = "启动";
-        setInterval(() => {
-           this.message.vehicleInfo[3] = this.message.vehicleInfo[3] - 0.001;
+        var back1 = setInterval(() => {
+           this.message.vehicleInfo[4] = this.message.vehicleInfo[4] - 0.001;
+           if(this.CarBackState == false){
+             this.CarBackmessage = "停止";
+             clearInterval(back1);
+           }
         }, 1000);
-       
-      } else {
-        this.CarBackmessage = "停止";
       }
     },
 
     CarLeft() {
       if (this.CarLeftState == true) {
         this.CarLeftmessage = "启动";
-        setInterval(() => {
-           this.message.vehicleInfo[4] = this.message.vehicleInfo[4] + 0.001;
+        var left1 =  setInterval(() => {
+           this.message.vehicleInfo[3] = this.message.vehicleInfo[3] - 0.001;
+           if(this.CarLeftState == false){
+                this.CarLeftmessage = "停止";
+                clearInterval(left1);
+           }
         }, 1000);
-        
-      } else {
-        this.CarLeftmessage = "停止";
       }
     },
 
     CarRight() {
       if (this.CarRightState == true) {
         this.CarRightmessage = "启动";
-         setInterval(() => {
-          this.message.vehicleInfo[4] = this.message.vehicleInfo[4] - 0.001;
+         var right1 = setInterval(() => {
+          this.message.vehicleInfo[3] = this.message.vehicleInfo[3] + 0.001;
+          if(this.CarRightState == false){
+            this.CarRightmessage = "停止";
+            clearInterval(right1);
+          }
         }, 1000);
-        
-      } else {
-        this.CarRightmessage = "停止";
-      }
+      } 
     },
 
     addCarSpeed() {  
       this.Carspeed += 5;
-      this.message.vehicleInfo[5] = this.Carspeed;
+      this.message.vehicleInfo[6] = this.Carspeed;
     },
 
     slowCarSpeed() {
       this.Carspeed -= 5;
-      this.message.vehicleInfo[5] = this.Carspeed;
+      this.message.vehicleInfo[6] = this.Carspeed;
     },
 
     changeCtrlStatus() {
       if (this.Controller == true) {
+        console.log("con", this.Controller);
         this.Controllermessage = "开启";
-        this.message.errorInfo[-1] = 0;
+        this.message.errorInfo[this.message.errorInfo.length - 1] = 0;
       } else {
         this.Controllermessage = "关闭";
+        this.message.errorInfo[this.message.errorInfo.length - 1] = 1;
+        console.log("con1", this.Controller);
       }
     },
 
@@ -212,6 +213,7 @@ export default {
         this.message.errorInfo[2] = 0;
       } else {
         this.Lidarmessage = "关闭";
+        this.message.errorInfo[2] = 1;
       }
     },
 
@@ -221,19 +223,15 @@ export default {
         this.message.errorInfo[3] = 0;
       } else {
         this.wavemessage = "故障";
+        this.message.errorInfo[3] = 2;
       }
     }
-    /*  filters:{
-           capitalize: function(value){
-                return value.tofixed(3);
-            }
-        } */
   },
 
   mounted() {
-    this.userName = this.$root.Login_username;      
+    this.Carspeed = this.message.vehicleInfo[6];
 
-    /*  let flag = false; */
+    this.userName = this.$root.Login_username;      
 
     const options = {
       connectTimeout: 4000,
@@ -244,22 +242,7 @@ export default {
 
     this.client = mqtt.connect("wss://www.sunnyiov.com/mqtt", options);    
 
-   /*  setInterval(() => {
-        this.Send();
-    }, 5000); */
-
-    /* setInterval(this.Send(), 5000); */
-    /* this.client.on("connect", e => {
-    console.error("cnt", this.cnt++);
-    if(this.flag == false){
-        setInterval(this.Send(), 5000);                 //定时
-        this.flag = true;
-       };
-    });  */
-    
-     this.client.on("connect", e => {
-        /* console.error("cnt", this.cnt++); 
-        setInterval(this.Send(), 5000);  */   
+    this.client.on("connect", e => {
         setInterval(() => {
             this.Send();
         }, 5000);     
@@ -276,15 +259,4 @@ export default {
 };
 </script>
 <style>
-/* .mint-cell {
-    background-color: #fff;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    color: inherit;
-    min-height: 48px;
-    display: block;
-    overflow: hidden;
-    position: relative;
-    text-decoration: none;
-} */
 </style>
